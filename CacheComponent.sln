@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CacheComponent", "CacheComponent\CacheComponent.csproj", "{6FA2DCBD-A5B7-4E63-A34B-E0686A18FBB5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CacheComponentTests", "CacheComponentTests\CacheComponentTests.csproj", "{2E13E9ED-96B1-471C-A872-9EB74AF03570}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6FA2DCBD-A5B7-4E63-A34B-E0686A18FBB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FA2DCBD-A5B7-4E63-A34B-E0686A18FBB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FA2DCBD-A5B7-4E63-A34B-E0686A18FBB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FA2DCBD-A5B7-4E63-A34B-E0686A18FBB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E13E9ED-96B1-471C-A872-9EB74AF03570}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E13E9ED-96B1-471C-A872-9EB74AF03570}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E13E9ED-96B1-471C-A872-9EB74AF03570}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E13E9ED-96B1-471C-A872-9EB74AF03570}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
