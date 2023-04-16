@@ -130,16 +130,40 @@ public class InMemoryCacheServiceTests
         cachingService.InMemoryCacheRemoved -= InMemoryCacheRemoved;
     }
     
+
     [Fact]
     public void CachingServiceItemRemovedWhenExpired()
     {
         cachingService.SetMaxCapacity( 10 );
-        cachingService.Set( dummyKey, dummyData, 2000 );
-        Thread.Sleep( 4000 );
-        
+        cachingService.SetCacheRefreshFrequency( 100 );
+        cachingService.Set( dummyKey, dummyData, 50 );
+        Thread.Sleep( 200 );
+
         cachingService.Get( dummyKey ).ShouldBeNull();
     }
 
+    [Fact]
+    public void CachingServiceThrowsOnEmptyRefreshFreqWithDefinedPersistTime()
+    {
+        var exception = Record.Exception(() => {
+            cachingService.SetMaxCapacity( 10 );
+            cachingService.GetType().GetField( "cacheRefreshFrequency", BindingFlags.Static | BindingFlags.NonPublic)!.SetValue( cachingService, 0 );
+            cachingService.Set( dummyKey, dummyData, 20 );
+        } );
+        exception!.Message.ShouldContain( "Refresh frequency must be set for the caching service to add an item with the defined time to be persisted." );    
+    }
+
+    [Fact]
+    public void CachingServiceThrowsOnNegativePersistTime()
+    {
+        var exception = Record.Exception(() => {
+            cachingService.SetMaxCapacity( 10 );
+            cachingService.SetCacheRefreshFrequency( 100 );
+            cachingService.Set( dummyKey, dummyData, -20 );
+        } );
+        exception!.Message.ShouldContain( "Time span to persist the cache cannot be negative." );
+        
+    }
     private void InMemoryCacheRemoved( object source, CachedItemEventArgs<string> args )
     {
         removedKeys.Add( args.Key );

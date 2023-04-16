@@ -14,14 +14,12 @@ public class InMemoryCachingService<TKey, TValue>: IDisposable, ICachingService<
     private static readonly LinkedList<CachedItem> cacheValueUsageOrderedList = new();
     private static int maxCapacity;
     private static int instanceCount;
-    private Timer expirationTimer;
+    private static Timer? expirationTimer;
+    private static int cacheRefreshFrequency;
 
     private InMemoryCachingService() 
     {
         instanceCount++;
-        expirationTimer = new Timer( TimeSpan.FromSeconds( 3 ).TotalMilliseconds );
-        expirationTimer.Elapsed += ExpirationTimerElapsed;
-        expirationTimer.Start();
     }
 
     public static InMemoryCachingService<TKey, TValue> Instance => threadInstance.Value;
@@ -39,7 +37,7 @@ public class InMemoryCachingService<TKey, TValue>: IDisposable, ICachingService<
             Console.WriteLine($"Max capacity is already set to {maxCapacity}"); // probably not needed more for debugging
         }
     }
-    
+
     public TValue? Get(TKey key)
     {
         LinkedListNode<CachedItem>? node;
@@ -60,6 +58,10 @@ public class InMemoryCachingService<TKey, TValue>: IDisposable, ICachingService<
     public void Set(TKey key, TValue value, int persistTimeSpanMs = 0)
     {
         if( maxCapacity == 0 ) throw new ApplicationException( "Max capacity is not set for the caching service, cannot add an item." );
+        if( persistTimeSpanMs > 0 && cacheRefreshFrequency == 0 ) 
+            throw new ApplicationException( "Refresh frequency must be set for the caching service to add an item with the defined time to be persisted." );
+        if( persistTimeSpanMs < 0 ) 
+            throw new ApplicationException( "Time span to persist the cache cannot be negative." );
 
         lock ( cache )
         {
@@ -76,10 +78,27 @@ public class InMemoryCachingService<TKey, TValue>: IDisposable, ICachingService<
         }
     }
 
+    public void SetCacheRefreshFrequency(int frequencyMs)
+    {
+        if( cacheRefreshFrequency == 0 )
+        {
+            cacheRefreshFrequency = frequencyMs;
+            expirationTimer = new Timer( TimeSpan.FromMilliseconds( cacheRefreshFrequency ).TotalMilliseconds );
+            expirationTimer.Elapsed += ExpirationTimerElapsed;
+            expirationTimer.Start();
+        }
+        else
+        {
+            Console.WriteLine($"Refresh frequency is already set to {cacheRefreshFrequency}"); // probably not needed more for debugging
+        }
+    }
+
     public void Dispose() {
-        expirationTimer.Elapsed -= ExpirationTimerElapsed;
-        expirationTimer.Stop();
-        expirationTimer.Dispose();
+        if (expirationTimer is not null) {
+            expirationTimer.Elapsed -= ExpirationTimerElapsed;
+            expirationTimer.Stop();
+            expirationTimer.Dispose();
+        }
     }
 
     protected virtual void OnInMemoryCacheRemoved(TKey key)

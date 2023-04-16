@@ -13,6 +13,7 @@ attempts to add additional items results in another item in the cache being
 evicted. The cache should implement the *least recently used* approach when selecting which item
 to evict.
 
-The cache component is a **singleton**, **thread-safe** for all methods (optional feature).
-Another optional feature - the mechanism which allows the consumer to know **when** items get evicted.
-And one more optional feature - it's possible to set the time in milliseconds to automatically remove the cache for e specific key e.g. define cache lifetime.
+The cache component is a **singleton**, **thread-safe** for all methods.
+Another feature - there is an event sender which can notify a subscriber to know when items get evicted.
+
+And one more feature - it's possible to set the time in milliseconds to automatically remove the cache for the specific key i.e. define cache time to be persisted.
