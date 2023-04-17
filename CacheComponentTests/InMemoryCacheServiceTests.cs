@@ -143,6 +143,18 @@ public class InMemoryCacheServiceTests
     }
 
     [Fact]
+    public void CachingServiceItemNotRemovedWithNoExpiration()
+    {
+        cachingService.SetMaxCapacity( 10 );
+        cachingService.SetCacheRefreshFrequency( 100 );
+        cachingService.Set( dummyKey, dummyData, 50 );
+        cachingService.Set( $"{dummyKey}1", dummyData );
+        Thread.Sleep( 200 );
+
+        cachingService.Get( $"{dummyKey}1" ).ShouldNotBeNull();
+    }
+
+    [Fact]
     public void CachingServiceThrowsOnEmptyRefreshFreqWithDefinedPersistTime()
     {
         var exception = Record.Exception(() => {

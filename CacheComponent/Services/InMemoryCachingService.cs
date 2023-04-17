@@ -129,7 +129,8 @@ public class InMemoryCachingService<TKey, TValue>: IDisposable, ICachingService<
         {
             var currentTime = DateTime.UtcNow;
             var expiredKeys = ( from item in cache
-                where item.Value.Value.ExpirationTime <= currentTime 
+                where item.Value.Value.ExpirationTime is not null 
+                    && item.Value.Value.ExpirationTime <= currentTime 
                 select item.Key ).ToList();
             expiredKeys.ForEach( RemoveCachedItem );
         }
